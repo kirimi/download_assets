@@ -11,6 +11,8 @@ class DownloadAssetsController {
   static String _assetsDir;
   static String get assetsDir => _assetsDir;
 
+  static String _assetsDownloadedFilename = '.assets_downloaded';
+
   static Future init({String directory = 'assets'}) async {
     String rootDir = (await getApplicationDocumentsDirectory()).path;
     _assetsDir = '$rootDir/$directory';
@@ -20,6 +22,9 @@ class DownloadAssetsController {
   static Future<bool> assetsDirAlreadyExists() async => await Directory(_assetsDir).exists();
 
   static Future<bool> assetsFileExists(String file) async => await File('$_assetsDir/$file').exists();
+
+  /// If assets successfully downloaded
+  static Future<bool> assetsDownloaded() async => await File('$_assetsDir/$_assetsDownloadedFilename').exists();
 
   /// Clear all download assets, if it already exists on local storage.
   static Future clearAssets() async {
@@ -95,6 +100,9 @@ class DownloadAssetsController {
           print(filename);
         }
       }
+
+      // create flag file
+      await File('$_assetsDir/$_assetsDownloadedFilename').create();
 
       if (onProgress != null && totalProgress != 100)
         onProgress(100);
